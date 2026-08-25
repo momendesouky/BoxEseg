@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coupons | BoxEseg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --latte:#FAF6EF; --latte-2:#F0E9DD; --card:#FFFDF8;
+      --espresso:#2B2018; --mocha:#6A5446; --caramel:#C1784F; --caramel-deep:#A25E3C;
+      --line:rgba(43,32,24,.12); --line-2:rgba(43,32,24,.26);
+      --shadow-sm:0 12px 26px -14px rgba(43,32,24,.18);
+      --serif:'Playfair Display',Georgia,serif; --sans:'Inter',-apple-system,'Segoe UI',Arial,sans-serif;
+      --r:16px; --r-sm:10px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--sans);background:var(--latte);color:var(--espresso);line-height:1.6;-webkit-font-smoothing:antialiased}
+    a{text-decoration:none;color:inherit}
+    button{font:inherit;cursor:pointer}
+    input,select,textarea{font:inherit;color:inherit}
+    ::selection{background:var(--caramel);color:#fff}
+    .layout{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
+    .sidebar{background:var(--espresso);color:var(--latte);padding:26px 16px;position:sticky;top:0;height:100vh;overflow-y:auto}
+    .side-brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:1.2rem;font-weight:700;padding:0 10px 20px;border-bottom:1px solid rgba(250,246,239,.12)}
+    .side-brand .mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--caramel) 50%,var(--latte) 50%);transform:rotate(-6deg)}
+    .side-nav{display:grid;gap:4px;margin-top:18px}
+    .side-nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:rgba(250,246,239,.66);font-size:.92rem;font-weight:600;transition:.2s}
+    .side-nav a:hover{color:var(--latte);background:rgba(250,246,239,.08)}
+    .side-nav a.active{background:var(--caramel);color:var(--espresso)}
+    .side-nav a .ico{width:17px;height:17px;flex:none;opacity:.85}
+    .side-foot{margin-top:22px;padding-top:18px;border-top:1px solid rgba(250,246,239,.12);display:grid;gap:4px}
+    .side-foot a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:rgba(250,246,239,.66);font-size:.92rem;font-weight:600;transition:.2s}
+    .side-foot a:hover{color:var(--latte);background:rgba(250,246,239,.08)}
+    .side-foot button{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;background:transparent;border:0;border-radius:10px;color:rgba(250,246,239,.66);font-size:.92rem;font-weight:600;text-align:left;transition:.2s}
+    .side-foot button:hover{color:var(--latte);background:rgba(250,246,239,.08)}
+    .main{min-width:0}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 30px;background:rgba(250,246,239,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+    .topbar h1{font-family:var(--serif);font-size:1.5rem;font-weight:600}
+    .topbar .sub{color:var(--mocha);font-size:.82rem;text-transform:uppercase;letter-spacing:.1em}
+    .menu-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;background:var(--card);border:1px solid var(--line-2);border-radius:10px}
+    .menu-toggle span{display:block;width:18px;height:2px;background:var(--espresso);margin:0 auto;transition:.3s}
+    .menu-toggle.open span:nth-child(1){transform:translateY(3.5px) rotate(45deg)}
+    .menu-toggle.open span:nth-child(2){transform:translateY(-3.5px) rotate(-45deg)}
+    .content{padding:30px}
+    .eyebrow{display:inline-flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;font-weight:600;color:var(--caramel)}
+    .eyebrow::before{content:"";width:24px;height:1.5px;background:var(--caramel)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 18px;border-radius:999px;border:1px solid var(--espresso);font-size:.87rem;font-weight:600;transition:all .22s ease;background:transparent;color:var(--espresso)}
+    .btn-primary{background:var(--espresso);color:var(--latte)}
+    .btn-primary:hover{background:var(--caramel);border-color:var(--caramel);transform:translateY(-1px)}
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:22px}
+    .panel-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
+    .panel-head h2{font-family:var(--serif);font-size:1.2rem;font-weight:600}
+    .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    label{display:grid;gap:7px;font-size:.84rem;font-weight:600}
+    input,select{width:100%;min-height:44px;border:1px solid var(--line-2);border-radius:11px;background:var(--card);padding:9px 14px;outline:none;transition:border-color .2s,box-shadow .2s}
+    input:focus,select:focus{border-color:var(--caramel);box-shadow:0 0 0 3px rgba(193,120,79,.15)}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px 10px;text-align:left;border-bottom:1px dashed var(--line);font-size:.9rem}
+    th{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mocha)}
+    td strong{font-family:var(--serif)}
+    .table-wrap{overflow-x:auto}
+    .code-pill{display:inline-block;padding:5px 12px;border-radius:8px;background:var(--espresso);color:var(--latte);font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.82rem;letter-spacing:.06em}
+    .status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:.76rem;font-weight:700;text-transform:capitalize}
+    .status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+    .st-active{background:#e7f0e9;color:#2f7d50}
+    .st-inactive{background:#f5e7e4;color:#b04035}
+    .muted{color:var(--mocha);font-size:.9rem}
+    .pagination{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:16px;flex-wrap:wrap}
+    .pagination a{font-size:.85rem;font-weight:600;color:var(--caramel-deep);border:1px solid var(--line-2);padding:8px 16px;border-radius:999px;transition:.2s}
+    .pagination a:hover{background:var(--espresso);color:var(--latte);border-color:var(--espresso)}
+    .pagination span{color:var(--mocha);font-size:.85rem}
+    .flash-stack{position:fixed;top:20px;right:20px;z-index:400;display:grid;gap:10px;width:min(360px,calc(100% - 40px))}
+    .flash{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:12px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow-sm)}
+    .flash-success{border-left:4px solid #4c9f70}
+    .flash-error{border-left:4px solid #c2483e}
+    .flash button{border:0;background:transparent;color:var(--mocha);font-size:1rem}
+    @media(max-width:960px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{position:fixed;left:0;top:0;bottom:0;width:256px;transform:translateX(-100%);transition:transform .3s ease;z-index:300}
+      .sidebar.open{transform:translateX(0)}
+      .menu-toggle{display:flex}
+      .form-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:600px){
+      .content{padding:20px 14px}
+      .topbar{padding:14px 16px}
+      .topbar h1{font-size:1.2rem}
+      .form-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+    <aside class="sidebar" data-sidebar>
+      <a href="/dashboard" class="side-brand"><span class="mark"></span>BoxEseg Admin</a>
+      <nav class="side-nav">
+        <a href="/dashboard"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+        <a href="/dashboard/products"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21 8-9-5-9 5 9 5 9-5Z"/><path d="m3 8v8l9 5 9-5V8"/></svg>Products</a>
+        <a href="/dashboard/categories"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h7l9 9-7 7-9-9V4Z"/><circle cx="8.5" cy="8.5" r="1"/></svg>Categories</a>
+        <a href="/dashboard/orders"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h12l2 4v16H4V6l2-4Z"/><path d="M8 2v4h8V2"/><path d="M8 12h8M8 16h8"/></svg>Orders</a>
+        <a href="/dashboard/users"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>Users</a>
+        <a href="/dashboard/inventory"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18v12H3V7Z"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg>Inventory</a>
+        <a href="/dashboard/coupons" class="active"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 0 0 6v6h20v-6a3 3 0 0 0 0-6V3H2v6Z"/><circle cx="12" cy="12" r="2"/></svg>Coupons</a>
+        <a href="/dashboard/reports"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-8"/></svg>Reports</a>
+      </nav>
+      <div class="side-foot">
+        <a href="/"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>View store</a>
+        <a href="/profile"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>Profile</a>
+        <form action="/auth/logout" method="POST" style="margin:0">
+          <button type="submit"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>Logout</button>
+        </form>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="menu-toggle" data-toggle aria-label="Toggle navigation"><span></span><span></span></button>
+          <div><div class="sub">Promotions</div><h1>Coupons</h1></div>
+        </div>
+      </header>
+
+      <div class="content">
+        <% if (flash && flash.length) { %>
+          <div class="flash-stack">
+            <% flash.forEach((item) => { %>
+              <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
+            <% }) %>
+          </div>
+        <% } %>
+
+        <form class="panel" action="/dashboard/coupons" method="POST">
+          <div class="panel-head"><h2>Create coupon</h2></div>
+          <div class="form-grid">
+            <label>Code
+              <input type="text" name="code" placeholder="STUDY20" required>
+            </label>
+            <label>Type
+              <select name="type">
+                <option value="percent">Percent</option>
+                <option value="fixed">Fixed</option>
+              </select>
+            </label>
+            <label>Value
+              <input type="number" name="value" min="0" step="0.01" required>
+            </label>
+            <label>Min subtotal
+              <input type="number" name="minSubtotal" min="0" step="0.01">
+            </label>
+            <label>Max discount
+              <input type="number" name="maxDiscount" min="0" step="0.01">
+            </label>
+            <label>Usage limit
+              <input type="number" name="usageLimit" min="0">
+            </label>
+          </div>
+          <div style="margin-top:18px"><button class="btn btn-primary" type="submit">Create coupon</button></div>
+        </form>
+
+        <div class="panel">
+          <div class="panel-head"><h2>All coupons</h2><span class="muted"><%= coupons.length %> shown</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Used</th><th>Status</th></tr></thead>
+              <tbody>
+                <% coupons.forEach((coupon) => { %>
+                  <tr>
+                    <td><span class="code-pill"><%= coupon.code %></span></td>
+                    <td class="muted"><%= coupon.type %></td>
+                    <td><strong><%= coupon.type === 'percent' ? `${coupon.value}%` : helpers.formatMoney(coupon.value) %></strong></td>
+                    <td class="muted"><%= coupon.usedCount %><%= coupon.usageLimit ? ` / ${coupon.usageLimit}` : '' %></td>
+                    <td><span class="status st-<%= coupon.isActive ? 'active' : 'inactive' %>"><%= coupon.isActive ? 'active' : 'inactive' %></span></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% if (pagination && pagination.totalPages > 1) { %>
+            <nav class="pagination" aria-label="Pagination">
+              <% if (pagination.hasPrev) { %>
+                <a href="<%= helpers.queryString(query, { page: pagination.prevPage }) %>">Previous</a>
+              <% } else { %><span></span><% } %>
+              <span>Page <%= pagination.page %> of <%= pagination.totalPages %></span>
+              <% if (pagination.hasNext) { %>
+                <a href="<%= helpers.queryString(query, { page: pagination.nextPage }) %>">Next</a>
+              <% } else { %><span></span><% } %>
+            </nav>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const toggle = document.querySelector('[data-toggle]');
+      const sidebar = document.querySelector('[data-sidebar]');
+      if (toggle && sidebar) {
+        toggle.addEventListener('click', () => { toggle.classList.toggle('open'); sidebar.classList.toggle('open'); });
+      }
+      document.querySelectorAll('[data-dismiss]').forEach((b) => b.addEventListener('click', () => b.closest('.flash').remove()));
+    })();
+  </script>
+</body>
+</html>

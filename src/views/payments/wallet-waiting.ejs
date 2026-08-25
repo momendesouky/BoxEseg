@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Wallet Payment | BoxEseg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --latte:#FAF6EF; --latte-2:#F0E9DD; --card:#FFFDF8;
+      --espresso:#2B2018; --mocha:#6A5446; --caramel:#C1784F; --caramel-deep:#A25E3C;
+      --line:rgba(43,32,24,.12); --line-2:rgba(43,32,24,.26);
+      --shadow:0 24px 50px -22px rgba(43,32,24,.22);
+      --shadow-sm:0 12px 26px -14px rgba(43,32,24,.18);
+      --serif:'Playfair Display',Georgia,serif; --sans:'Inter',-apple-system,'Segoe UI',Arial,sans-serif;
+      --r:16px; --r-sm:10px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--sans);background:var(--latte);color:var(--espresso);line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+    a{text-decoration:none;color:inherit}
+    ::selection{background:var(--caramel);color:#fff}
+    .container{width:100%;max-width:1240px;margin:0 auto;padding:0 24px}
+
+    .topbar{position:sticky;top:0;z-index:200;background:rgba(250,246,239,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+    .topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;height:74px}
+    .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:1.55rem;font-weight:700}
+    .brand-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--caramel) 50%,var(--espresso) 50%);box-shadow:0 0 0 2px var(--espresso);transform:rotate(-6deg)}
+    .brand span{color:var(--caramel)}
+
+    .page{padding:56px 0 96px;flex:1;display:flex;align-items:center;justify-content:center}
+    .waiting-card{max-width:520px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:48px 36px;box-shadow:var(--shadow);text-align:center}
+
+    .spinner{width:56px;height:56px;border:4px solid var(--latte-2);border-top-color:var(--caramel);border-radius:50%;margin:0 auto 28px;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .waiting-card h1{font-family:var(--serif);font-size:1.6rem;margin-bottom:8px}
+    .waiting-card p{color:var(--mocha);font-size:.95rem;margin-bottom:20px}
+    .waiting-card .detail{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:var(--latte);font-size:.85rem;color:var(--mocha);margin-bottom:16px}
+
+    .otp-steps{display:grid;gap:14px;text-align:left;margin:24px 0;background:var(--latte);border-radius:12px;padding:20px 24px}
+    .otp-steps .step{display:flex;gap:12px;align-items:flex-start}
+    .otp-steps .step-num{width:28px;height:28px;border-radius:50%;background:var(--caramel);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0;margin-top:2px}
+    .otp-steps .step-text{font-size:.9rem;color:var(--mocha)}
+    .otp-steps .step-text strong{color:var(--espresso)}
+
+    .status-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;font-size:.85rem;font-weight:600;margin-top:8px}
+    .status-pending{background:rgba(193,120,79,.1);color:var(--caramel-deep)}
+    .status-success{background:rgba(76,159,112,.1);color:#2f7d50}
+
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 22px;border-radius:999px;border:1px solid var(--espresso);font-size:.9rem;font-weight:600;transition:all .22s ease;background:transparent;color:var(--espresso);margin-top:20px}
+    .btn:hover{background:var(--espresso);color:var(--latte)}
+    .btn-sm{min-height:38px;padding:0 16px;font-size:.82rem}
+
+    .site-footer{background:var(--espresso);color:var(--latte);margin-top:auto}
+    .footer-bottom{border-top:1px solid rgba(250,246,239,.14);padding:22px 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:rgba(250,246,239,.5);font-size:.85rem}
+
+    @media(max-width:600px){
+      .topbar-inner{height:66px}
+      .waiting-card{padding:32px 22px}
+      .page{padding:40px 0 70px}
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="/" class="brand"><span class="brand-mark"></span>Box<span>Eseg</span></a>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <div class="waiting-card">
+        <div class="spinner"></div>
+        <h1>Check your phone</h1>
+        <p>An OTP has been sent to your wallet number. Please check your phone and enter the code to complete payment.</p>
+
+        <div class="detail">📱 <%= walletNumber %></div>
+
+        <div class="otp-steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text"><strong>Check your notifications</strong> — You should receive an OTP code from your wallet provider (Vodafone Cash, Etisalat, etc.)</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text"><strong>Enter the OTP</strong> on your phone to authorize the payment of <strong>EGP <%= typeof orderTotal !== 'undefined' ? orderTotal : '' %></strong></div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">Once confirmed, your order will be processed automatically</div>
+          </div>
+        </div>
+
+        <div class="status-badge status-pending" id="statusBadge">
+          <span class="dot"></span> Waiting for payment confirmation...
+        </div>
+
+        <div style="margin-top:24px">
+          <a class="btn btn-sm" href="/orders">View my orders</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-bottom container">
+      <span>&copy; <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
+      <span>Designed &amp; printed with care</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var pollCount = 0;
+      var maxPolls = 120;
+      var interval = 5000;
+      var badge = document.getElementById('statusBadge');
+
+      var poll = setInterval(function () {
+        pollCount++;
+        if (pollCount >= maxPolls) {
+          clearInterval(poll);
+          badge.className = 'status-badge status-pending';
+          badge.innerHTML = '<span class="dot"></span> Timed out — check your orders page for updates.';
+          return;
+        }
+
+        fetch('/payments/status/<%= orderNumber %>', { credentials: 'same-origin' })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data.paymentStatus === 'paid') {
+              clearInterval(poll);
+              badge.className = 'status-badge status-success';
+              badge.innerHTML = '&#10003; Payment confirmed!';
+              setTimeout(function () { window.location.href = '/orders/<%= typeof orderId !== 'undefined' ? orderId : '' %>'; }, 1500);
+            } else if (data.paymentStatus === 'failed') {
+              clearInterval(poll);
+              badge.className = 'status-badge status-pending';
+              badge.innerHTML = '&#10007; Payment failed. Please try again.';
+            }
+          })
+          .catch(function () {});
+      }, interval);
+    })();
+  </script>
+</body>
+</html>

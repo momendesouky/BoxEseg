@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --latte:#FAF6EF; --espresso:#2B2018; --mocha:#6A5446; --caramel:#C1784F; --card:#FFFDF8; }
+    body { font-family:'Inter',sans-serif; background:var(--latte); color:var(--espresso); display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .box { background:var(--card); border-radius:16px; padding:48px 40px; max-width:420px; width:90%; text-align:center; box-shadow:0 4px 24px rgba(43,32,24,.06); }
+    .spinner { width:48px; height:48px; border:4px solid var(--latte); border-top-color:var(--caramel); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 24px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    h2 { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:600; margin-bottom:12px; }
+    p { color:var(--mocha); font-size:.9rem; line-height:1.6; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="spinner"></div>
+    <h2>Opening Wallet Payment…</h2>
+    <p>You are being redirected to the secure wallet payment page. Please wait.</p>
+  </div>
+  <script>
+    var url = <%- JSON.stringify(redirectUrl) %>;
+    window.location.href = url;
+  </script>
+</body>
+</html>

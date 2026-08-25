@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders | BoxEseg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --latte:#FAF6EF; --latte-2:#F0E9DD; --card:#FFFDF8;
+      --espresso:#2B2018; --mocha:#6A5446; --caramel:#C1784F; --caramel-deep:#A25E3C;
+      --line:rgba(43,32,24,.12); --line-2:rgba(43,32,24,.26);
+      --shadow:0 24px 50px -22px rgba(43,32,24,.22);
+      --shadow-sm:0 12px 26px -14px rgba(43,32,24,.18);
+      --serif:'Playfair Display',Georgia,serif; --sans:'Inter',-apple-system,'Segoe UI',Arial,sans-serif;
+      --r:16px; --r-sm:10px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--sans);background:var(--latte);color:var(--espresso);line-height:1.65;-webkit-font-smoothing:antialiased}
+    a{text-decoration:none;color:inherit}
+    img{display:block;max-width:100%}
+    button{font:inherit;cursor:pointer}
+    ::selection{background:var(--caramel);color:#fff}
+    .container{width:100%;max-width:1240px;margin:0 auto;padding:0 24px}
+
+    .topbar{position:sticky;top:0;z-index:200;background:rgba(250,246,239,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+    .topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;height:74px}
+    .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:1.55rem;font-weight:700}
+    .brand-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--caramel) 50%,var(--espresso) 50%);box-shadow:0 0 0 2px var(--espresso);transform:rotate(-6deg)}
+    .brand span{color:var(--caramel)}
+    .site-nav{display:flex;align-items:center;gap:6px}
+    .site-nav a{padding:9px 15px;border-radius:999px;font-size:.9rem;font-weight:500;color:var(--mocha)}
+    .site-nav a:hover{color:var(--espresso);background:var(--latte-2)}
+    .site-nav a.active{background:var(--espresso);color:var(--latte)}
+    .nav-actions{display:flex;align-items:center;gap:12px}
+    .nav-actions .ghost{font-size:.9rem;font-weight:600}
+    .nav-actions .ghost:hover{color:var(--caramel)}
+    .menu-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;background:transparent;border:1px solid var(--line);border-radius:10px}
+    .menu-toggle span{display:block;width:18px;height:2px;background:var(--espresso);margin:0 auto;transition:.3s}
+    .menu-toggle.open span:nth-child(1){transform:translateY(3.5px) rotate(45deg)}
+    .menu-toggle.open span:nth-child(2){transform:translateY(-3.5px) rotate(-45deg)}
+    .mobile-menu{position:fixed;inset:74px 0 auto 0;z-index:190;background:var(--latte);border-bottom:1px solid var(--line);padding:18px 24px 26px;display:none}
+    .mobile-menu.open{display:grid;gap:6px}
+    .mobile-menu a{padding:13px 10px;border-radius:10px;font-size:1.05rem;font-weight:600}
+    .mobile-menu a.active,.mobile-menu a:hover{background:var(--latte-2)}
+    .mobile-menu .auth-row{display:flex;gap:10px;margin-top:10px}
+
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid var(--espresso);font-size:.9rem;font-weight:600;transition:all .22s ease;background:transparent;color:var(--espresso)}
+    .btn-primary{background:var(--espresso);color:var(--latte)}
+    .btn-primary:hover{background:var(--caramel);border-color:var(--caramel);transform:translateY(-2px);box-shadow:0 12px 24px -12px rgba(193,120,79,.7)}
+    .btn-outline:hover{background:var(--espresso);color:var(--latte);transform:translateY(-2px)}
+    .btn-sm{min-height:38px;padding:0 16px;font-size:.83rem}
+
+    .flash-stack{position:fixed;top:90px;right:20px;z-index:400;display:grid;gap:10px;width:min(360px,calc(100% - 40px))}
+    .flash{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:12px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow-sm);animation:slideIn .35s cubic-bezier(.16,1,.3,1)}
+    .flash-success{border-left:4px solid #4c9f70}
+    .flash-error{border-left:4px solid #c2483e}
+    .flash button{border:0;background:transparent;color:var(--mocha);font-size:1rem}
+    @keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+
+    .page{padding:56px 0 96px}
+    .eyebrow{display:inline-flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.18em;font-size:.74rem;font-weight:600;color:var(--caramel)}
+    .eyebrow::before{content:"";width:26px;height:1.5px;background:var(--caramel)}
+    .page-head{margin-bottom:40px}
+    .page-head h1{font-family:var(--serif);font-size:clamp(2.1rem,4vw,3rem);font-weight:600;margin-top:14px}
+
+    .order-list{display:grid;gap:18px}
+    .order-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px;display:grid;grid-template-columns:auto 1fr auto auto;gap:28px;align-items:center;opacity:0;transform:translateY(16px)}
+    .order-card.reveal{opacity:1;transform:none;transition:.45s cubic-bezier(.16,1,.3,1)}
+    .order-num{font-family:var(--serif);font-size:1.2rem;font-weight:700}
+    .order-num small{display:block;font-family:var(--sans);font-size:.8rem;font-weight:400;color:var(--mocha);margin-top:2px}
+    .order-meta{display:flex;gap:22px;flex-wrap:wrap}
+    .order-meta div{display:grid;gap:2px}
+    .order-meta dt{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--mocha)}
+    .order-meta dd{font-weight:600}
+    .order-total{font-family:var(--serif);font-size:1.4rem;font-weight:700;text-align:right}
+    .status{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:999px;font-size:.78rem;font-weight:700;text-transform:capitalize}
+    .status::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+    .st-pending,.st-cancelled{background:#f5e7e4;color:#b04035}
+    .st-confirmed,.st-processing{background:#f6ecdd;color:#a25e3c}
+    .st-shipped,.st-delivered{background:#e7f0e9;color:#2f7d50}
+
+    .empty-state{padding:76px 30px;text-align:center;background:var(--card);border:1px dashed var(--line-2);border-radius:var(--r)}
+    .empty-state h2{font-family:var(--serif);font-size:1.8rem;margin-bottom:8px}
+    .empty-state p{color:var(--mocha);margin-bottom:24px}
+
+    .pagination{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:40px}
+    .pagination a,.pagination span{min-width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 16px;border:1px solid var(--line-2);border-radius:12px;font-weight:600;font-size:.9rem;background:var(--card)}
+    .pagination a:hover{background:var(--espresso);color:var(--latte);border-color:var(--espresso)}
+    .pagination .current{background:var(--espresso);color:var(--latte);border-color:var(--espresso)}
+    .pagination .label{background:transparent;border-color:transparent;color:var(--mocha)}
+
+    .site-footer{background:var(--espresso);color:var(--latte);margin-top:20px}
+    .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:48px;padding:72px 0 48px}
+    .footer-grid h4{font-family:var(--serif);font-size:1.05rem;margin-bottom:16px}
+    .footer-brand p{color:rgba(250,246,239,.62);max-width:300px;margin-top:12px}
+    .footer-links{display:flex;flex-direction:column;gap:11px}
+    .footer-links a{color:rgba(250,246,239,.62)}
+    .footer-links a:hover{color:var(--latte)}
+    .footer-bottom{border-top:1px solid rgba(250,246,239,.14);padding:22px 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:rgba(250,246,239,.5);font-size:.85rem}
+
+    @media(max-width:960px){
+      .site-nav{display:none}
+      .menu-toggle{display:flex}
+      .nav-actions{display:none}
+      .footer-grid{grid-template-columns:1fr;gap:32px;padding-block:52px}
+    }
+    @media(max-width:600px){
+      .topbar-inner{height:66px}
+      .mobile-menu{inset:66px 0 auto 0}
+      .order-card{grid-template-columns:1fr auto;gap:14px}
+      .order-meta{grid-column:1/-1}
+      .page{padding:40px 0 70px}
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="/" class="brand"><span class="brand-mark"></span>Box<span>Eseg</span></a>
+      <button class="menu-toggle" data-toggle aria-label="Toggle navigation"><span></span><span></span></button>
+      <nav class="site-nav">
+        <a href="/">Home</a>
+        <a href="/products">Shop</a>
+        <a href="/wishlist">Wishlist</a>
+        <a href="/cart">Cart</a>
+        <% if (currentUser && currentUser.role === 'admin') { %><a href="/dashboard">Dashboard</a><% } %>
+      </nav>
+      <div class="nav-actions">
+        <a class="ghost" href="/profile"><%= currentUser.firstName %></a>
+        <form action="/auth/logout" method="POST" style="margin:0"><button class="btn btn-sm btn-outline" type="submit">Logout</button></form>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-menu" data-mobile>
+    <a href="/">Home</a>
+    <a href="/products">Shop</a>
+    <a href="/wishlist">Wishlist</a>
+    <a href="/cart">Cart</a>
+    <% if (currentUser && currentUser.role === 'admin') { %><a href="/dashboard">Dashboard</a><% } %>
+    <div class="auth-row">
+      <a class="btn btn-sm btn-primary" href="/profile"><%= currentUser.firstName %></a>
+      <a class="btn btn-sm btn-outline" href="/auth/logout">Logout</a>
+    </div>
+  </div>
+
+  <% if (flash && flash.length) { %>
+    <div class="flash-stack">
+      <% flash.forEach((item) => { %>
+        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <main class="page">
+    <div class="container">
+      <div class="page-head">
+        <span class="eyebrow">Orders</span>
+        <h1>Your purchase history.</h1>
+      </div>
+
+      <% if (orders.length) { %>
+        <div class="order-list">
+          <% orders.forEach((order) => {
+            let statusClass = 'st-pending';
+            if (order.status === 'confirmed') statusClass = 'st-confirmed';
+            if (order.status === 'processing') statusClass = 'st-processing';
+            if (order.status === 'shipped' || order.status === 'delivered') statusClass = 'st-shipped';
+            if (order.status === 'cancelled') statusClass = 'st-cancelled';
+            const created = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-EG', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+          %>
+            <article class="order-card">
+              <div class="order-num">
+                <%= order.orderNumber %>
+                <small><%= created %></small>
+              </div>
+              <dl class="order-meta">
+                <div><dt>Status</dt><dd><span class="status <%= statusClass %>"><%= order.status %></span></dd></div>
+                <div><dt>Payment</dt><dd style="text-transform:capitalize"><%= order.payment ? order.payment.status : '—' %></dd></div>
+                <div><dt>Items</dt><dd><%= order.items.length %></dd></div>
+              </dl>
+              <div class="order-total"><%= helpers.formatMoney(order.total) %></div>
+              <a class="btn btn-outline btn-sm" href="/orders/<%= order.id %>">View order</a>
+            </article>
+          <% }) %>
+        </div>
+
+        <% if (pagination && pagination.totalPages > 1) { %>
+          <nav class="pagination" aria-label="Pagination">
+            <% if (pagination.hasPrev) { %><a href="<%= helpers.queryString(query, { page: pagination.prevPage }) %>">← Prev</a><% } %>
+            <span class="current"><%= pagination.page %></span>
+            <span class="label">of <%= pagination.totalPages %></span>
+            <% if (pagination.hasNext) { %><a href="<%= helpers.queryString(query, { page: pagination.nextPage }) %>">Next →</a><% } %>
+          </nav>
+        <% } %>
+      <% } else { %>
+        <div class="empty-state">
+          <h2>No orders yet</h2>
+          <p>Your completed checkouts will appear here.</p>
+          <a class="btn btn-primary" href="/products">Shop products</a>
+        </div>
+      <% } %>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>BoxEseg.</h4>
+          <p>Curating the finest analog tools for modern writers, thinkers and makers.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Shop</h4>
+          <a href="/products">All products</a>
+          <a href="/products?sort=price_asc">Under budget</a>
+          <a href="/wishlist">Wishlist</a>
+        </div>
+        <div class="footer-links">
+          <h4>Account</h4>
+          <a href="/orders">Your orders</a>
+          <a href="/profile">Profile</a>
+          <a href="mailto:<%= site.email %>"><%= site.email %></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
+        <span>Designed &amp; printed with care</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const toggle = document.querySelector('[data-toggle]');
+      const mobile = document.querySelector('[data-mobile]');
+      if (toggle && mobile) {
+        toggle.addEventListener('click', () => {
+          toggle.classList.toggle('open');
+          mobile.classList.toggle('open');
+        });
+      }
+      document.querySelectorAll('[data-dismiss]').forEach((b) => {
+        b.addEventListener('click', () => b.closest('.flash').remove());
+      });
+      const cards = document.querySelectorAll('.order-card');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e, i) => {
+            if (e.isIntersecting) {
+              setTimeout(() => e.target.classList.add('reveal'), i * 70);
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.1 });
+        cards.forEach((c) => io.observe(c));
+      } else {
+        cards.forEach((c) => c.classList.add('reveal'));
+      }
+    })();
+  </script>
+</body>
+</html>
