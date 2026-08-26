@@ -16,12 +16,8 @@ const env = {
     folder: process.env.CLOUDINARY_FOLDER || 'boxseg/products',
   },
   mail: {
-    host: process.env.SMTP_HOST || '',
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: process.env.SMTP_SECURE === 'true',
-    user: process.env.SMTP_USER || '',
-    pass: process.env.SMTP_PASS || '',
     from: process.env.MAIL_FROM || 'BoxEseg <no-reply@boxseg.local>',
+    resendApiKey: process.env.RESEND_API_KEY || '',
   },
   paymob: {
     apiKey: process.env.PAYMOB_API_KEY || '',

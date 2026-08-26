@@ -105,7 +105,10 @@ class AuthService {
     });
 
     const resetUrl = `${env.clientUrl}/auth/reset-password/${token}`;
-    await this.emailService.sendPasswordReset(user, resetUrl);
+    this.emailService.sendPasswordReset(user, resetUrl).catch((err) => {
+      const logger = require('../utils/logger');
+      logger.error(`Password reset email failed for ${email}: ${err.message}`);
+    });
   }
 
   async resetPassword(token, password) {
