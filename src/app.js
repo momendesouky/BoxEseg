@@ -29,8 +29,7 @@ configurePassport(passport);
 app.set('trust proxy', 1);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-//app.set('layout', 'layouts/main');
-//app.use(expressLayouts);
+
 app.use(compression());
 app.use(
   helmet({
