@@ -1,8 +1,12 @@
 const fetch = require('node-fetch');
+const https = require('https');
 const crypto = require('crypto');
 const env = require('../config/env');
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
+
+const paymobAgent = new https.Agent({ keepAlive: true, timeout: 10000 });
+const PAYMOB_TIMEOUT = 10000;
 
 class PaymentService {
   isPaymobConfigured() {
@@ -28,6 +32,8 @@ class PaymentService {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        agent: paymobAgent,
+        timeout: PAYMOB_TIMEOUT,
       });
     } catch (err) {
       logger.error(`Paymob ${label}: network error — ${err.message}`);
@@ -222,7 +228,6 @@ class PaymentService {
 
     logger.info(`Paymob wallet full flow: payment key OK, calling /payments/pay`);
 
-    const fetch = require('node-fetch');
     let payRes;
     try {
       payRes = await fetch('https://accept.paymob.com/api/acceptance/payments/pay', {
@@ -235,6 +240,8 @@ class PaymentService {
           },
           payment_token: paymentKey.token,
         }),
+        agent: paymobAgent,
+        timeout: PAYMOB_TIMEOUT,
       });
     } catch (err) {
       logger.error(`Paymob wallet full flow: network error — ${err.message}`);

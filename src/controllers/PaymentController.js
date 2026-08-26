@@ -71,7 +71,7 @@ const fs = require('fs');
 const path = require('path');
 function walletDebug(msg) {
   const line = `[${new Date().toISOString()}] ${msg}\n`;
-  fs.appendFileSync(path.join(__dirname, '..', '..', 'wallet-debug.log'), line);
+  fs.appendFile(path.join(__dirname, '..', '..', 'wallet-debug.log'), line, () => {});
 }
 
 exports.walletPay = catchAsync(async (req, res) => {

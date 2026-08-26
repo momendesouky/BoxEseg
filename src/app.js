@@ -22,9 +22,6 @@ const errorHandler = require('./middlewares/errorHandler');
 const logger = require('./utils/logger');
 
 const app = express();
-app.get('/passenger-test', (req, res) => {
-    res.status(200).send('EXPRESS + PASSENGER WORKS');
-});
 configurePassport(passport);
 
 app.set('trust proxy', 1);

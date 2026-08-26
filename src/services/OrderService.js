@@ -184,20 +184,20 @@ class OrderService {
       }
     }
 
-    try {
-      const invoice = await this.invoiceService.generateInvoice(order);
-      order = await this.orderRepository.updateById(order.id, { invoice });
-    } catch (err) {
+    this.invoiceService.generateInvoice(order).then(async (invoice) => {
+      await this.orderRepository.updateById(order.id, { invoice });
+      logger.info(`Checkout: invoice generated for order ${orderNumber}`);
+    }).catch((err) => {
       logger.error(`Checkout: invoice generation failed for order ${orderNumber}: ${err.message}`);
-    }
+    });
 
-    try {
-      await this.emailService.sendOrderConfirmation(user, order);
-    } catch (err) {
+    this.emailService.sendOrderConfirmation(user, order).catch((err) => {
       logger.error(`Checkout: email failed for order ${orderNumber}: ${err.message}`);
-    }
+    });
 
-     await this.cartRepository.clear(user.id);
+    if (isPaymob) {
+      await this.cartRepository.clear(user.id);
+    }
     logger.info(`Checkout: cart cleared for user ${user.id}, order ${orderNumber} ready for redirect`);
 
     return order;
