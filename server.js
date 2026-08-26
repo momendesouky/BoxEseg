@@ -2,9 +2,7 @@ const app = require('./src/app');
 const { connectDatabase } = require('./src/config/database');
 const env = require('./src/config/env');
 const logger = require('./src/utils/logger');
-app.get('/passenger-test', (req, res) => {
-    res.status(200).send('Passenger + Express works');
-});
+
 async function startServer() {
   try {
     await connectDatabase();
