@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/images/logo.png">
   <title>BoxEseg | Fine Paper &amp; Desk Tools</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,7 +34,7 @@
     .topbar{position:sticky;top:0;z-index:200;background:rgba(250,246,239,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
     .topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;height:74px}
     .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:1.55rem;font-weight:700}
-    .brand-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--caramel) 50%,var(--espresso) 50%);box-shadow:0 0 0 2px var(--espresso);transform:rotate(-6deg)}
+    .brand-mark{width:38px;height:38px;background:url('/images/logo.png') no-repeat center/contain}
     .brand span{color:var(--caramel)}
     .site-nav{display:flex;align-items:center;gap:6px}
     .site-nav a{padding:9px 15px;border-radius:999px;font-size:.9rem;font-weight:500;color:var(--mocha)}
@@ -246,7 +247,7 @@
       <% flash.forEach((item) => { %>
         <div class="flash flash-<%= item.type %>">
           <span><%= item.message %></span>
-          <button type="button" data-dismiss aria-label="Dismiss">×</button>
+          <button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button>
         </div>
       <% }) %>
     </div>
@@ -277,16 +278,16 @@
 
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track" data-marquee>
-      <span>Journals <i>✦</i></span>
-      <span>Fountain pens <i>✦</i></span>
-      <span>Artisan inks <i>✦</i></span>
-      <span>Paper goods <i>✦</i></span>
-      <span>Desk objects <i>✦</i></span>
-      <span>Journals <i>✦</i></span>
-      <span>Fountain pens <i>✦</i></span>
-      <span>Artisan inks <i>✦</i></span>
-      <span>Paper goods <i>✦</i></span>
-      <span>Desk objects <i>✦</i></span>
+      <span>Journals <i>Ã¢Å“Â¦</i></span>
+      <span>Fountain pens <i>Ã¢Å“Â¦</i></span>
+      <span>Artisan inks <i>Ã¢Å“Â¦</i></span>
+      <span>Paper goods <i>Ã¢Å“Â¦</i></span>
+      <span>Desk objects <i>Ã¢Å“Â¦</i></span>
+      <span>Journals <i>Ã¢Å“Â¦</i></span>
+      <span>Fountain pens <i>Ã¢Å“Â¦</i></span>
+      <span>Artisan inks <i>Ã¢Å“Â¦</i></span>
+      <span>Paper goods <i>Ã¢Å“Â¦</i></span>
+      <span>Desk objects <i>Ã¢Å“Â¦</i></span>
     </div>
   </div>
 
@@ -307,26 +308,26 @@
             <span class="cat-num">0<%= i + 1 %> / <%= category.name %></span>
             <h3><%= category.name %></h3>
             <p><%= category.description || 'Premium writing instruments and accessories crafted for the perfect desk setup.' %></p>
-            <span class="cat-link">Shop <%= category.name %> →</span>
+            <span class="cat-link">Shop <%= category.name %> Ã¢â€ â€™</span>
           </a>
         <% }) } else { %>
           <a class="cat-card" href="/products?category=paper">
             <span class="cat-num">01 / Paper</span>
             <h3>Fine Paper</h3>
             <p>Fountain-pen friendly journals, notepads and bespoke stationery.</p>
-            <span class="cat-link">Shop paper →</span>
+            <span class="cat-link">Shop paper Ã¢â€ â€™</span>
           </a>
           <a class="cat-card" href="/products?category=pens">
             <span class="cat-num">02 / Pens</span>
             <h3>Writing Tools</h3>
             <p>Precision pens, artisan inks and brass desk accessories.</p>
-            <span class="cat-link">Shop pens →</span>
+            <span class="cat-link">Shop pens Ã¢â€ â€™</span>
           </a>
           <a class="cat-card" href="/products?category=desk">
             <span class="cat-num">03 / Objects</span>
             <h3>Desk Objects</h3>
             <p>Leather goods, clips and organizational tools for creatives.</p>
-            <span class="cat-link">Shop accessories →</span>
+            <span class="cat-link">Shop accessories Ã¢â€ â€™</span>
           </a>
         <% } %>
       </div>
@@ -377,7 +378,7 @@
             </div>
           </article>
         <% }) } else { %>
-          <p style="color:var(--mocha);font-style:italic;grid-column:1/-1;text-align:center">Fresh arrivals are on their way — check back soon.</p>
+          <p style="color:var(--mocha);font-style:italic;grid-column:1/-1;text-align:center">Fresh arrivals are on their way Ã¢â‚¬â€ check back soon.</p>
         <% } %>
       </div>
     </div>
@@ -388,7 +389,7 @@
       <div>
         <span class="eyebrow">Our story</span>
         <h2>Made for the tactile mind.</h2>
-        <p>BoxEseg began with a simple belief — that good tools make better thinking. Every journal is tested for its paper, every pen for its balance. Nothing leaves our desk until it would grace yours.</p>
+        <p>BoxEseg began with a simple belief Ã¢â‚¬â€ that good tools make better thinking. Every journal is tested for its paper, every pen for its balance. Nothing leaves our desk until it would grace yours.</p>
         <div class="steps">
           <div class="step"><strong>01</strong><span>Curated for quality, not quantity</span></div>
           <div class="step"><strong>02</strong><span>Tested by writers &amp; artists</span></div>
@@ -424,7 +425,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
+        <span>Ã‚Â© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
         <span>Designed &amp; printed with care</span>
       </div>
     </div>

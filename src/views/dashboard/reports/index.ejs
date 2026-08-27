@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/images/logo.png">
   <title>Reports | BoxEseg</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +27,7 @@
     .layout{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
     .sidebar{background:var(--espresso);color:var(--latte);padding:26px 16px;position:sticky;top:0;height:100vh;overflow-y:auto}
     .side-brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:1.2rem;font-weight:700;padding:0 10px 20px;border-bottom:1px solid rgba(250,246,239,.12)}
-    .side-brand .mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--caramel) 50%,var(--latte) 50%);transform:rotate(-6deg)}
+    .side-brand .mark{width:32px;height:32px;background:url('/images/logo.png') no-repeat center/contain}
     .side-nav{display:grid;gap:4px;margin-top:18px}
     .side-nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:rgba(250,246,239,.66);font-size:.92rem;font-weight:600;transition:.2s}
     .side-nav a:hover{color:var(--latte);background:rgba(250,246,239,.08)}
@@ -120,7 +121,7 @@
         <% if (flash && flash.length) { %>
           <div class="flash-stack">
             <% flash.forEach((item) => { %>
-              <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
+              <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
             <% }) %>
           </div>
         <% } %>
