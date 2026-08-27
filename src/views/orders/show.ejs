@@ -156,7 +156,7 @@
   <% if (flash && flash.length) { %>
     <div class="flash-stack">
       <% flash.forEach((item) => { %>
-        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
+        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
       <% }) %>
     </div>
   <% } %>
@@ -207,7 +207,7 @@
           </div>
           <div style="margin-top:18px">
             <div class="sum-row"><span>Subtotal</span><span><%= helpers.formatMoney(order.subtotal) %></span></div>
-            <% if (order.discount > 0) { %><div class="sum-row"><span>Discount</span><span style="color:#2f7d50">Ã¢Ë†â€™ <%= helpers.formatMoney(order.discount) %></span></div><% } %>
+            <% if (order.discount > 0) { %><div class="sum-row"><span>Discount</span><span style="color:#2f7d50">− <%= helpers.formatMoney(order.discount) %></span></div><% } %>
             <div class="sum-row grand"><span>Total</span><span><%= helpers.formatMoney(order.total) %></span></div>
           </div>
         </div>
@@ -236,7 +236,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>Ã‚Â© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
+        <span>© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
         <span>Designed &amp; printed with care</span>
       </div>
     </div>

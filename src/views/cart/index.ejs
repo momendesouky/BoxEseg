@@ -176,7 +176,7 @@
   <% if (flash && flash.length) { %>
     <div class="flash-stack">
       <% flash.forEach((item) => { %>
-        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
+        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
       <% }) %>
     </div>
   <% } %>
@@ -215,7 +215,7 @@
           <aside class="summary">
             <h2>Order summary</h2>
             <div class="summary-row"><span>Subtotal</span><span><%= helpers.formatMoney(totals.subtotal) %></span></div>
-            <% if (totals.discount > 0) { %><div class="summary-row"><span>Discount</span><span style="color:#2f7d50">Ã¢Ë†â€™ <%= helpers.formatMoney(totals.discount) %></span></div><% } %>
+            <% if (totals.discount > 0) { %><div class="summary-row"><span>Discount</span><span style="color:#2f7d50">− <%= helpers.formatMoney(totals.discount) %></span></div><% } %>
             <div class="summary-row total"><span>Total</span><span><%= helpers.formatMoney(totals.total) %></span></div>
 
             <form class="coupon-row" action="/cart/coupon" method="POST">
@@ -231,7 +231,7 @@
             <% } %>
 
             <a class="btn btn-primary checkout-btn" href="/checkout">Proceed to checkout</a>
-            <a class="continue" href="/products">Continue shopping Ã¢â€ â€™</a>
+            <a class="continue" href="/products">Continue shopping →</a>
           </aside>
         </div>
       <% } else { %>
@@ -265,7 +265,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>Ã‚Â© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
+        <span>© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
         <span>Designed &amp; printed with care</span>
       </div>
     </div>

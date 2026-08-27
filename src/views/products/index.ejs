@@ -236,7 +236,7 @@
       <% flash.forEach((item) => { %>
         <div class="flash flash-<%= item.type %>">
           <span><%= item.message %></span>
-          <button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button>
+          <button type="button" data-dismiss aria-label="Dismiss">×</button>
         </div>
       <% }) %>
     </div>
@@ -247,7 +247,7 @@
       <div class="container">
         <span class="eyebrow">The Collection</span>
         <h1>Stationery crafted to be <em>kept.</em></h1>
-        <p>Journals, pens, inks and desk objects Ã¢â‚¬â€ every piece selected for the desk you spend your life at.</p>
+        <p>Journals, pens, inks and desk objects — every piece selected for the desk you spend your life at.</p>
       </div>
     </section>
 
@@ -274,14 +274,14 @@
 
         <select class="f-select" name="sort" data-auto-submit>
           <option value="latest" <%= filters.sort === 'latest' ? 'selected' : '' %>>Newest</option>
-          <option value="price_asc" <%= filters.sort === 'price_asc' ? 'selected' : '' %>>Price low Ã¢â€ â€™ high</option>
-          <option value="price_desc" <%= filters.sort === 'price_desc' ? 'selected' : '' %>>Price high Ã¢â€ â€™ low</option>
+          <option value="price_asc" <%= filters.sort === 'price_asc' ? 'selected' : '' %>>Price low → high</option>
+          <option value="price_desc" <%= filters.sort === 'price_desc' ? 'selected' : '' %>>Price high → low</option>
           <option value="rating" <%= filters.sort === 'rating' ? 'selected' : '' %>>Best rated</option>
         </select>
 
         <div class="f-price">
           <input type="number" name="minPrice" min="0" placeholder="Min" value="<%= minPrice %>" aria-label="Min price">
-          <span>Ã¢â‚¬â€</span>
+          <span>—</span>
           <input type="number" name="maxPrice" min="0" placeholder="Max" value="<%= maxPrice %>" aria-label="Max price">
         </div>
 
@@ -299,10 +299,10 @@
 
         <% if (filters.category || filters.material || filters.q || filters.minPrice || filters.maxPrice) { %>
           <div class="active-chips">
-            <% if (filters.q) { %><span class="chip">Ã¢â‚¬Å“<%= filters.q %>Ã¢â‚¬Â <a href="<%= helpers.queryString(filters, { q: '' }) %>">Ãƒâ€”</a></span><% } %>
-            <% if (filters.category) { %><span class="chip">Category: <%= filters.category %> <a href="<%= helpers.queryString(filters, { category: '' }) %>">Ãƒâ€”</a></span><% } %>
-            <% if (filters.material) { %><span class="chip">Material: <%= materialLabels[filters.material] || filters.material %> <a href="<%= helpers.queryString(filters, { material: '' }) %>">Ãƒâ€”</a></span><% } %>
-            <% if (filters.minPrice || filters.maxPrice) { %><span class="chip">Price range <a href="<%= helpers.queryString(filters, { minPrice: '', maxPrice: '' }) %>">Ãƒâ€”</a></span><% } %>
+            <% if (filters.q) { %><span class="chip">“<%= filters.q %>” <a href="<%= helpers.queryString(filters, { q: '' }) %>">×</a></span><% } %>
+            <% if (filters.category) { %><span class="chip">Category: <%= filters.category %> <a href="<%= helpers.queryString(filters, { category: '' }) %>">×</a></span><% } %>
+            <% if (filters.material) { %><span class="chip">Material: <%= materialLabels[filters.material] || filters.material %> <a href="<%= helpers.queryString(filters, { material: '' }) %>">×</a></span><% } %>
+            <% if (filters.minPrice || filters.maxPrice) { %><span class="chip">Price range <a href="<%= helpers.queryString(filters, { minPrice: '', maxPrice: '' }) %>">×</a></span><% } %>
           </div>
         <% } %>
 
@@ -352,16 +352,16 @@
           <% if (pagination && pagination.totalPages > 1) { %>
             <nav class="pagination" aria-label="Pagination">
               <% if (pagination.hasPrev) { %>
-                <a href="<%= helpers.queryString(query, { page: pagination.prevPage }) %>">Ã¢â€ Â Prev</a>
+                <a href="<%= helpers.queryString(query, { page: pagination.prevPage }) %>">← Prev</a>
               <% } else { %>
-                <span class="label">Ã¢â€ Â Prev</span>
+                <span class="label">← Prev</span>
               <% } %>
               <span class="current"><%= pagination.page %></span>
               <span class="label">of <%= pagination.totalPages %></span>
               <% if (pagination.hasNext) { %>
-                <a href="<%= helpers.queryString(query, { page: pagination.nextPage }) %>">Next Ã¢â€ â€™</a>
+                <a href="<%= helpers.queryString(query, { page: pagination.nextPage }) %>">Next →</a>
               <% } else { %>
-                <span class="label">Next Ã¢â€ â€™</span>
+                <span class="label">Next →</span>
               <% } %>
             </nav>
           <% } %>
@@ -369,7 +369,7 @@
         <% } else { %>
           <div class="empty-state">
             <h2>No products found</h2>
-            <p>Try a wider search or clear a filter Ã¢â‚¬â€ the right tool is here somewhere.</p>
+            <p>Try a wider search or clear a filter — the right tool is here somewhere.</p>
             <a class="btn btn-primary" href="/products">Clear filters</a>
           </div>
         <% } %>
@@ -398,7 +398,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>Ã‚Â© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
+        <span>© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
         <span>Designed & printed with care</span>
       </div>
     </div>

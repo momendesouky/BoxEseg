@@ -125,7 +125,7 @@
         <% if (flash && flash.length) { %>
           <div class="flash-stack">
             <% flash.forEach((item) => { %>
-              <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
+              <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
             <% }) %>
           </div>
         <% } %>
@@ -155,8 +155,8 @@
               <dl>
                 <div><dt>Recipient</dt><dd><%= order.shippingAddress.fullName %></dd></div>
                 <div><dt>Phone</dt><dd><%= order.shippingAddress.phone %></dd></div>
-                <div><dt>City</dt><dd><%= order.shippingAddress.city || order.shippingAddress.governorate || 'Ã¢â‚¬â€' %></dd></div>
-                <div><dt>Address</dt><dd><%= order.shippingAddress.street || order.shippingAddress.addressLine || 'Ã¢â‚¬â€' %></dd></div>
+                <div><dt>City</dt><dd><%= order.shippingAddress.city || order.shippingAddress.governorate || '—' %></dd></div>
+                <div><dt>Address</dt><dd><%= order.shippingAddress.street || order.shippingAddress.addressLine || '—' %></dd></div>
               </dl>
             </div>
           </div>
@@ -180,7 +180,7 @@
             <dl>
               <div><dt>Total</dt><dd><%= helpers.formatMoney(order.total) %></dd></div>
               <div><dt>Method</dt><dd><%= order.paymentMethod %></dd></div>
-              <div><dt>Placed</dt><dd><%= order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Ã¢â‚¬â€' %></dd></div>
+              <div><dt>Placed</dt><dd><%= order.createdAt ? new Date(order.createdAt).toLocaleDateString() : '—' %></dd></div>
               <div><dt>Status</dt><dd><span class="status"><%= order.status %></span></dd></div>
             </dl>
             <button class="btn btn-primary" type="submit" style="width:100%">Save order</button>

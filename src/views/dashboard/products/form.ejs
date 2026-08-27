@@ -120,7 +120,7 @@
         <% if (flash && flash.length) { %>
           <div class="flash-stack">
             <% flash.forEach((item) => { %>
-              <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
+              <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
             <% }) %>
           </div>
         <% } %>

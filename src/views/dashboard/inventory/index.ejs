@@ -117,7 +117,7 @@
         <% if (flash && flash.length) { %>
           <div class="flash-stack">
             <% flash.forEach((item) => { %>
-              <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
+              <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
             <% }) %>
           </div>
         <% } %>
@@ -141,7 +141,7 @@
               </table>
             </div>
           <% } else { %>
-            <p class="empty">Nothing low Ã¢â‚¬â€ the shelves are full.</p>
+            <p class="empty">Nothing low — the shelves are full.</p>
           <% } %>
         </div>
 
@@ -158,7 +158,7 @@
                       <td><span class="type-pill"><%= log.type %></span></td>
                       <td><span class="stock-badge sb-num"><%= log.quantityChange %></span></td>
                       <td><span class="stock-badge <%= log.stockAfter <= (log.product?.lowStockThreshold || 0) ? 'sb-low' : 'sb-ok' %>"><%= log.stockAfter %></span></td>
-                      <td class="muted"><%= log.note || 'Ã¢â‚¬â€' %></td>
+                      <td class="muted"><%= log.note || '—' %></td>
                     </tr>
                   <% }) %>
                 </tbody>

@@ -104,7 +104,7 @@
   <% if (flash && flash.length) { %>
     <div class="flash-stack">
       <% flash.forEach((item) => { %>
-        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
+        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
       <% }) %>
     </div>
   <% } %>
@@ -142,7 +142,7 @@
             <input type="email" name="email" autocomplete="email" placeholder="you@example.com" required>
           </label>
           <label>Password
-            <input type="password" name="password" autocomplete="current-password" placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢" required>
+            <input type="password" name="password" autocomplete="current-password" placeholder="••••••••" required>
           </label>
           <button class="btn btn-primary" type="submit">Login</button>
         </form>
@@ -151,7 +151,7 @@
           <a href="/auth/forgot-password">Forgot password?</a>
           <a href="/auth/register">New here? Create account</a>
         </div>
-        <p class="back-shop"><a href="/products">Ã¢â€ Â Continue shopping</a></p>
+        <p class="back-shop"><a href="/products">Continue shopping</a></p>
       </div>
     </div>
   </main>

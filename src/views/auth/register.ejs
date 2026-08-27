@@ -107,7 +107,7 @@
   <% if (flash && flash.length) { %>
     <div class="flash-stack">
       <% flash.forEach((item) => { %>
-        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
+        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
       <% }) %>
     </div>
   <% } %>
@@ -165,7 +165,7 @@
           <span style="color:var(--mocha)">Already registered?</span>
           <a href="/auth/login">Login</a>
         </div>
-        <p class="back-shop"><a href="/products">Ã¢â€ Â Continue shopping</a></p>
+        <p class="back-shop"><a href="/products">← Continue shopping</a></p>
       </div>
     </div>
   </main>

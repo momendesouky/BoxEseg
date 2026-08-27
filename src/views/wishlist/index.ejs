@@ -161,7 +161,7 @@
   <% if (flash && flash.length) { %>
     <div class="flash-stack">
       <% flash.forEach((item) => { %>
-        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
+        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
       <% }) %>
     </div>
   <% } %>
@@ -171,7 +171,7 @@
       <div class="page-head">
         <span class="eyebrow">Wishlist</span>
         <h1>Saved for later.</h1>
-        <p>Everything youÃ¢â‚¬â„¢ve marked as worth remembering Ã¢â‚¬â€ ready to move to your cart whenever you are.</p>
+        <p>Everything you’ve marked as worth remembering — ready to move to your cart whenever you are.</p>
       </div>
 
       <% if (wishlist.products && wishlist.products.length) { %>
@@ -186,7 +186,7 @@
                 <img src="<%= img %>" alt="<%= product.name %>" loading="lazy">
                 <% if (out) { %><span class="badge badge-stock">Out of stock</span><% } %>
                 <form action="/wishlist/<%= product.id %>?_method=DELETE" method="POST" style="margin:0">
-                  <button class="remove" type="submit" aria-label="Remove <%= product.name %>">Ãƒâ€”</button>
+                  <button class="remove" type="submit" aria-label="Remove <%= product.name %>">×</button>
                 </form>
               </a>
               <div class="card-body">
@@ -238,7 +238,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>Ã‚Â© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
+        <span>© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
         <span>Designed &amp; printed with care</span>
       </div>
     </div>

@@ -79,12 +79,12 @@
         <h1>Check your phone</h1>
         <p>An OTP has been sent to your wallet number. Please check your phone and enter the code to complete payment.</p>
 
-        <div class="detail">Ã°Å¸â€œÂ± <%= walletNumber %></div>
+        <div class="detail">📱 <%= walletNumber %></div>
 
         <div class="otp-steps">
           <div class="step">
             <div class="step-num">1</div>
-            <div class="step-text"><strong>Check your notifications</strong> Ã¢â‚¬â€ You should receive an OTP code from your wallet provider (Vodafone Cash, Etisalat, etc.)</div>
+            <div class="step-text"><strong>Check your notifications</strong> — You should receive an OTP code from your wallet provider (Vodafone Cash, Etisalat, etc.)</div>
           </div>
           <div class="step">
             <div class="step-num">2</div>
@@ -126,7 +126,7 @@
         if (pollCount >= maxPolls) {
           clearInterval(poll);
           badge.className = 'status-badge status-pending';
-          badge.innerHTML = '<span class="dot"></span> Timed out Ã¢â‚¬â€ check your orders page for updates.';
+          badge.innerHTML = '<span class="dot"></span> Timed out — check your orders page for updates.';
           return;
         }
 

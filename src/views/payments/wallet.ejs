@@ -96,7 +96,7 @@
     <div class="container topbar-inner">
       <a href="/" class="brand"><span class="brand-mark"></span>Box<span>Eseg</span></a>
       <div class="nav-actions">
-        <a class="ghost" href="/checkout">Ã¢â€ Â Back to checkout</a>
+        <a class="ghost" href="/checkout">← Back to checkout</a>
       </div>
     </div>
   </header>
@@ -104,7 +104,7 @@
   <% if (flash && flash.length) { %>
     <div class="flash-stack">
       <% flash.forEach((item) => { %>
-        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
+        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
       <% }) %>
     </div>
   <% } %>
@@ -142,14 +142,14 @@
             <span class="btn-text">Pay now</span>
           </button>
         </form>
-        <a class="back-link" href="/checkout">Ã¢â€ Â Choose a different payment method</a>
+        <a class="back-link" href="/checkout">← Choose a different payment method</a>
       </div>
     </div>
   </main>
 
   <footer class="site-footer">
     <div class="footer-bottom container">
-      <span>Ã‚Â© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
+      <span>© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
       <span>Designed &amp; printed with care</span>
     </div>
   </footer>

@@ -152,7 +152,7 @@
   <% if (flash && flash.length) { %>
     <div class="flash-stack">
       <% flash.forEach((item) => { %>
-        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">Ãƒâ€”</button></div>
+        <div class="flash flash-<%= item.type %>"><span><%= item.message %></span><button type="button" data-dismiss aria-label="Dismiss">×</button></div>
       <% }) %>
     </div>
   <% } %>
@@ -181,7 +181,7 @@
               </div>
               <dl class="order-meta">
                 <div><dt>Status</dt><dd><span class="status <%= statusClass %>"><%= order.status %></span></dd></div>
-                <div><dt>Payment</dt><dd style="text-transform:capitalize"><%= order.payment ? order.payment.status : 'Ã¢â‚¬â€' %></dd></div>
+                <div><dt>Payment</dt><dd style="text-transform:capitalize"><%= order.payment ? order.payment.status : '—' %></dd></div>
                 <div><dt>Items</dt><dd><%= order.items.length %></dd></div>
               </dl>
               <div class="order-total"><%= helpers.formatMoney(order.total) %></div>
@@ -192,10 +192,10 @@
 
         <% if (pagination && pagination.totalPages > 1) { %>
           <nav class="pagination" aria-label="Pagination">
-            <% if (pagination.hasPrev) { %><a href="<%= helpers.queryString(query, { page: pagination.prevPage }) %>">Ã¢â€ Â Prev</a><% } %>
+            <% if (pagination.hasPrev) { %><a href="<%= helpers.queryString(query, { page: pagination.prevPage }) %>">← Prev</a><% } %>
             <span class="current"><%= pagination.page %></span>
             <span class="label">of <%= pagination.totalPages %></span>
-            <% if (pagination.hasNext) { %><a href="<%= helpers.queryString(query, { page: pagination.nextPage }) %>">Next Ã¢â€ â€™</a><% } %>
+            <% if (pagination.hasNext) { %><a href="<%= helpers.queryString(query, { page: pagination.nextPage }) %>">Next →</a><% } %>
           </nav>
         <% } %>
       <% } else { %>
@@ -229,7 +229,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>Ã‚Â© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
+        <span>© <%= new Date().getFullYear() %> BoxEseg. Stationery for the analog mind.</span>
         <span>Designed &amp; printed with care</span>
       </div>
     </div>
