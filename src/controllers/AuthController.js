@@ -41,8 +41,13 @@ exports.login = catchAsync(async (req, res) => {
 
 exports.logout = (req, res) => {
   res.clearCookie('access_token');
-  req.session.destroy(() => {
-    res.redirect('/');
+
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Session destroy error:', err);
+    }
+
+    return res.redirect(303, '/');
   });
 };
 
