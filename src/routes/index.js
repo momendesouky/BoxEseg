@@ -10,6 +10,7 @@ const orderRoutes = require('./orderRoutes');
 const profileRoutes = require('./profileRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
 const paymentRoutes = require('./paymentRoutes');
+const telegramRoutes = require('./telegramRoutes');
 
 const router = express.Router();
 
@@ -23,5 +24,6 @@ router.use('/orders', orderRoutes);
 router.use('/profile', profileRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/payments', paymentRoutes);
+router.use('/telegram', telegramRoutes);
 
 module.exports = router;

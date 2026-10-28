@@ -84,6 +84,10 @@
     .pay-option input{width:auto;min-height:auto;accent-color:var(--espresso)}
     .pay-option strong{font-size:.92rem}
     .pay-option small{display:block;color:var(--mocha);font-size:.8rem}
+    .pay-option.disabled{opacity:.55;cursor:not-allowed;background:var(--latte-2)}
+    .pay-option.disabled:hover{border-color:var(--line)}
+    .pay-option.disabled input{cursor:not-allowed}
+    .pay-option.disabled::after{content:'Not available yet';margin-left:auto;font-size:.72rem;font-weight:600;color:var(--mocha);text-transform:uppercase;letter-spacing:.08em}
     .submit-note{font-size:.8rem;color:var(--mocha);text-align:center;margin-top:12px}
 
     .summary{position:sticky;top:96px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;box-shadow:var(--shadow-sm)}
@@ -137,8 +141,13 @@
         <% if (currentUser && currentUser.role === 'admin') { %><a href="/dashboard">Dashboard</a><% } %>
       </nav>
       <div class="nav-actions">
-        <a class="ghost" href="/profile"><%= currentUser.firstName %></a>
-        <form action="/auth/logout" method="POST" style="margin:0"><button class="btn btn-sm btn-outline" type="submit">Logout</button></form>
+        <% if (currentUser) { %>
+          <a class="ghost" href="/profile"><%= currentUser.firstName %></a>
+          <form action="/auth/logout" method="POST" style="margin:0"><button class="btn btn-sm btn-outline" type="submit">Logout</button></form>
+        <% } else { %>
+          <a class="ghost" href="/orders/guest">Track orders</a>
+          <a class="ghost" href="/auth/login">Login</a>
+        <% } %>
       </div>
     </div>
   </header>
@@ -150,8 +159,13 @@
     <a href="/cart" class="active">Cart</a>
     <% if (currentUser && currentUser.role === 'admin') { %><a href="/dashboard">Dashboard</a><% } %>
     <div class="auth-row">
-      <a class="btn btn-sm btn-primary" href="/profile"><%= currentUser.firstName %></a>
-      <a class="btn btn-sm btn-outline" href="/auth/logout">Logout</a>
+      <% if (currentUser) { %>
+        <a class="btn btn-sm btn-primary" href="/profile"><%= currentUser.firstName %></a>
+        <a class="btn btn-sm btn-outline" href="/auth/logout">Logout</a>
+      <% } else { %>
+        <a class="btn btn-sm btn-outline" href="/auth/login">Login</a>
+        <a class="btn btn-sm btn-primary" href="/auth/register">Get started</a>
+      <% } %>
     </div>
   </div>
 
@@ -170,52 +184,79 @@
         <h1>Almost there.</h1>
       </div>
 
+      <% const checkoutAction = currentUser ? "/checkout" : "/checkout/guest"; %>
       <div class="checkout-layout">
-        <form class="checkout-form form-grid" action="/checkout" method="POST">
+        <form class="checkout-form form-grid" action="<%= checkoutAction %>" method="POST">
           <div class="form-section span-2">
             <h2>Delivery details</h2>
           </div>
           <label class="span-2">Full name
-            <input type="text" name="fullName" value="<%= currentUser.firstName %> <%= currentUser.lastName || '' %>" required>
+            <input type="text" name="fullName" value="<%= (draft && draft.address && draft.address.fullName) || (currentUser ? currentUser.firstName + ' ' + (currentUser.lastName || '') : '') %>" required>
           </label>
           <label>Phone
-            <input type="tel" name="phone" value="<%= currentUser.phone || '' %>" required>
+            <input type="tel" name="phone" value="<%= (draft && draft.address && draft.address.phone) || (currentUser ? currentUser.phone || '' : '') %>" required>
           </label>
+          <% if (!currentUser) { %>
+            <fieldset class="span-2" style="border:1px solid var(--line);border-radius:12px;padding:16px">
+              <div style="font-size:.95rem;font-weight:600">How should we send your verification code?</div>
+              <div style="display:flex;gap:20px;margin-top:10px">
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input type="radio" name="contactMethod" value="email" <%= !draft || draft.contactMethod === 'email' ? 'checked' : '' %> style="width:auto;min-height:auto;accent-color:var(--espresso)">
+                  <strong>Email</strong>
+                </label>
+                <% if (telegramEnabled) { %>
+                  <label style="display:flex;align-items:center;gap:8px">
+                    <input type="radio" name="contactMethod" value="telegram" <%= draft && draft.contactMethod === 'telegram' ? 'checked' : '' %> style="width:auto;min-height:auto;accent-color:var(--espresso)">
+                    <strong>Telegram</strong>
+                  </label>
+                <% } %>
+              </div>
+              <label id="email-contact-row" style="margin-top:14px">
+                <input type="email" name="email" placeholder="you@example.com" value="<%= draft && draft.contactType === 'email' ? draft.contact : '' %>">
+              </label>
+              <p style="font-size:.8rem;color:var(--mocha);margin-top:10px">
+                We send a one-time code to verify it's you before the order is placed — no account needed. It expires in 10 minutes. Telegram needs one quick step: open our bot and send it the code shown on the next page — then it's automatic forever.
+              </p>
+            </fieldset>
+          <% } %>
+
           <label>City
-            <input type="text" name="city" required>
+            <input type="text" name="city" value="<%= (draft && draft.address && draft.address.city) || '' %>" required>
           </label>
           <label>Area
-            <input type="text" name="area">
+            <input type="text" name="area" value="<%= (draft && draft.address && draft.address.area) || '' %>">
           </label>
           <label>Building
-            <input type="text" name="building">
+            <input type="text" name="building" value="<%= (draft && draft.address && draft.address.building) || '' %>">
           </label>
           <label class="span-2">Street address
-            <input type="text" name="street" required>
+            <input type="text" name="street" value="<%= (draft && draft.address && draft.address.street) || '' %>" required>
           </label>
           <label class="span-2">Order notes
-            <textarea name="notes" rows="3" placeholder="Anything we should know about delivery?"></textarea>
+            <textarea name="notes" rows="3" placeholder="Anything we should know about delivery?"><%= (draft && draft.address && draft.address.notes) || '' %></textarea>
           </label>
 
           <fieldset class="payment-options span-2" style="border:0;padding:0">
             <div class="form-section" style="margin-bottom:0">
               <h2>Payment method</h2>
             </div>
+            <% // Old session drafts that had a Paymob method selected fall back to COD. %>
+            <% const selectedPm = draft && draft.paymentMethod && draft.paymentMethod !== 'paymob_card' && draft.paymentMethod !== 'paymob_wallet' ? draft.paymentMethod : 'cod'; %>
             <label class="pay-option">
-              <input type="radio" name="paymentMethod" value="cod" checked>
+              <input type="radio" name="paymentMethod" value="cod" <%= selectedPm === 'cod' ? 'checked' : '' %>>
               <span><strong>Cash on delivery</strong><small>Pay when your parcel arrives</small></span>
             </label>
-            <label class="pay-option">
-              <input type="radio" name="paymentMethod" value="paymob_card">
+            <label class="pay-option disabled" title="Card payment is not available yet — coming soon.">
+              <input type="radio" name="paymentMethod" value="paymob_card" disabled <%= selectedPm === 'paymob_card' ? 'checked' : '' %>>
               <span><strong>Paymob card</strong><small>Secure online payment</small></span>
             </label>
-            <label class="pay-option">
-              <input type="radio" name="paymentMethod" value="paymob_wallet">
+            <label class="pay-option disabled" title="Wallet payment is not available yet — coming soon.">
+              <input type="radio" name="paymentMethod" value="paymob_wallet" disabled <%= selectedPm === 'paymob_wallet' ? 'checked' : '' %>>
               <span><strong>Paymob wallet</strong><small>Mobile wallet payment (Fawry, Vodafone Cash, etc.)</small></span>
             </label>
           </fieldset>
 
-          <button class="btn btn-primary span-2" type="submit">Place order</button>
+          <button class="btn btn-primary span-2" type="submit"><%= currentUser ? 'Place order' : 'Send code & continue' %></button>
           <p class="submit-note span-2">By placing this order you agree to our terms &amp; privacy policy.</p>
         </form>
 
@@ -276,6 +317,20 @@
       document.querySelectorAll('[data-dismiss]').forEach((b) => {
         b.addEventListener('click', () => b.closest('.flash').remove());
       });
+
+      // Guest contact-method toggle: show email row only when Email is chosen.
+      const emailRow = document.getElementById('email-contact-row');
+      const emailInput = emailRow ? emailRow.querySelector('input[name="email"]') : null;
+      const methods = document.querySelectorAll('input[name="contactMethod"]');
+      if (emailRow && methods.length) {
+        const sync = () => {
+          const chosen = document.querySelector('input[name="contactMethod"]:checked').value;
+          emailRow.style.display = chosen === 'email' ? 'grid' : 'none';
+          if (emailInput) emailInput.required = chosen === 'email';
+        };
+        methods.forEach((m) => m.addEventListener('change', sync));
+        sync();
+      }
     })();
   </script>
 </body>

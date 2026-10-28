@@ -28,10 +28,23 @@ const orderItemSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const guestIdentitySchema = new mongoose.Schema(
+  {
+    email: { type: String, trim: true, lowercase: true },
+    phone: { type: String, trim: true },
+    name: { type: String, trim: true },
+  },
+  { _id: false }
+);
+
 const orderSchema = new mongoose.Schema(
   {
     orderNumber: { type: String, required: true, unique: true, index: true },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
+    guest: {
+      type: guestIdentitySchema,
+      default: null,
+    },
     items: [orderItemSchema],
     shippingAddress: addressSnapshotSchema,
     subtotal: { type: Number, required: true, min: 0 },
@@ -65,5 +78,9 @@ const orderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Faster lookups for the OTP ("guest") order-tracking page.
+orderSchema.index({ 'guest.email': 1, placedAt: -1 });
+orderSchema.index({ 'guest.phone': 1, placedAt: -1 });
 
 module.exports = mongoose.model('Order', orderSchema);

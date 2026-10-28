@@ -24,6 +24,7 @@ exports.showRegister = (req, res) => {
 exports.register = catchAsync(async (req, res) => {
   const authResult = await container.authService.register(req.body);
   setAuthSession(req, res, authResult);
+  await container.cartService.mergeGuestCart(req.session, authResult.user.id);
   req.flash('success', 'Welcome to BoxEseg.');
   res.redirect('/products');
 });
@@ -35,6 +36,7 @@ exports.showLogin = (req, res) => {
 exports.login = catchAsync(async (req, res) => {
   const authResult = await container.authService.login(req.body);
   setAuthSession(req, res, authResult);
+  await container.cartService.mergeGuestCart(req.session, authResult.user.id);
   req.flash('success', 'Signed in successfully.');
   res.redirect('/products');
 });
@@ -87,9 +89,10 @@ exports.facebookCallback = (req, res, next) => {
   return passport.authenticate('facebook', {
     failureRedirect: '/auth/login',
     failureFlash: false,
-  })(req, res, (error) => {
+  })(req, res, async (error) => {
     if (error) return next(error);
     setAuthSession(req, res, container.authService.buildSession(req.user));
+    await container.cartService.mergeGuestCart(req.session, req.user.id);
     req.flash('success', 'Signed in with Facebook.');
     return res.redirect('/products');
   });
@@ -113,9 +116,10 @@ exports.googleCallback = (req, res, next) => {
   return passport.authenticate('google', {
     failureRedirect: '/auth/login',
     failureFlash: false,
-  })(req, res, (error) => {
+  })(req, res, async (error) => {
     if (error) return next(error);
     setAuthSession(req, res, container.authService.buildSession(req.user));
+    await container.cartService.mergeGuestCart(req.session, req.user.id);
     req.flash('success', 'Signed in with Google.');
     return res.redirect('/products');
   });

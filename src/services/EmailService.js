@@ -39,6 +39,31 @@ class EmailService {
       html: `<p>Hello ${user.firstName},</p><p>Your order <strong>${order.orderNumber}</strong> was received.</p><p>Total: <strong>${order.total} EGP</strong></p>`,
     });
   }
+
+  // userLike: { email, firstName } — accepts guest objects too.
+  sendOtpEmail(userLike, code, purpose) {
+    const action =
+      purpose === 'checkout'
+        ? 'verify your contact before placing your order'
+        : 'view your orders';
+
+    return this.sendMail({
+      to: userLike.email,
+      subject: `Your BoxEseg verification code: ${code}`,
+      text: `Your BoxEseg code is ${code}. Use it to ${action}. It expires in ${env.otp.ttlMinutes} minutes.`,
+      html: `<p>Hello ${userLike.firstName || 'there'},</p><p>Use this code to ${action}:</p><p style="font-size:28px;font-weight:700;letter-spacing:6px">${code}</p><p>This code expires in ${env.otp.ttlMinutes} minutes. If you didn't request it, ignore this email.</p>`,
+    });
+  }
+
+  // guestLike: { name, email, phone }
+  sendGuestOrderConfirmation(guestLike, order) {
+    return this.sendMail({
+      to: guestLike.email,
+      subject: `Your BoxEseg order ${order.orderNumber}`,
+      text: `Thank you for your order ${order.orderNumber}. Total: ${order.total} EGP. Visit ${env.clientUrl}/orders/guest to view your orders using this email.`,
+      html: `<p>Hello ${guestLike.name || 'there'},</p><p>Your order <strong>${order.orderNumber}</strong> was received.</p><p>Total: <strong>${order.total} EGP</strong></p><p>Track your order any time at <a href="${env.clientUrl}/orders/guest">${env.clientUrl}/orders/guest</a> using this email.</p>`,
+    });
+  }
 }
 
 module.exports = EmailService;

@@ -23,8 +23,10 @@
     button{font:inherit;cursor:pointer}
     input,select,textarea{font:inherit;color:inherit}
     ::selection{background:var(--caramel);color:#fff}
-    .layout{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
-    .sidebar{background:var(--espresso);color:var(--latte);padding:26px 16px;position:sticky;top:0;height:100vh;overflow-y:auto}
+    .layout{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh;transition:grid-template-columns .3s ease}
+    .layout.sb-collapsed{grid-template-columns:0 minmax(0,1fr)}
+    .layout.sb-collapsed .sidebar{min-width:0;padding:0;opacity:0;visibility:hidden;pointer-events:none}
+    .sidebar{background:var(--espresso);color:var(--latte);padding:26px 16px;position:sticky;top:0;height:100vh;overflow-y:auto;transition:opacity .3s ease,visibility .3s ease}
     .side-brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:1.2rem;font-weight:700;padding:0 10px 20px;border-bottom:1px solid rgba(250,246,239,.12)}
     .side-brand .mark{width:32px;height:32px;background:url('/images/logo.png') no-repeat center/contain}
     .side-nav{display:grid;gap:4px;margin-top:18px}
@@ -41,7 +43,7 @@
     .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 30px;background:rgba(250,246,239,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
     .topbar h1{font-family:var(--serif);font-size:1.5rem;font-weight:600}
     .topbar .sub{color:var(--mocha);font-size:.82rem;text-transform:uppercase;letter-spacing:.1em}
-    .menu-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;background:var(--card);border:1px solid var(--line-2);border-radius:10px}
+    .menu-toggle{display:flex;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;background:var(--card);border:1px solid var(--line-2);border-radius:10px}
     .menu-toggle span{display:block;width:18px;height:2px;background:var(--espresso);margin:0 auto;transition:.3s}
     .menu-toggle.open span:nth-child(1){transform:translateY(3.5px) rotate(45deg)}
     .menu-toggle.open span:nth-child(2){transform:translateY(-3.5px) rotate(-45deg)}
@@ -164,6 +166,23 @@
         toggle.addEventListener('click', () => { toggle.classList.toggle('open'); sidebar.classList.toggle('open'); });
       }
       document.querySelectorAll('[data-dismiss]').forEach((b) => b.addEventListener('click', () => b.closest('.flash').remove()));
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var layout = document.querySelector('.layout');
+      var toggle = document.querySelector('[data-toggle]');
+      if (!layout || !toggle) return;
+      var isDesktop = function () { return window.matchMedia('(max-width: 960px)').matches === false; };
+      if (localStorage.getItem('adminSidebar') === 'collapsed' && isDesktop()) {
+        layout.classList.add('sb-collapsed');
+      }
+      toggle.addEventListener('click', function () {
+        if (!isDesktop()) return; // mobile drawer is handled by the existing script
+        var collapsed = layout.classList.toggle('sb-collapsed');
+        try { localStorage.setItem('adminSidebar', collapsed ? 'collapsed' : 'open'); } catch (e) {}
+      });
     })();
   </script>
 </body>

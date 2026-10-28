@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 const AppError = require('../utils/AppError');
+const env = require('../config/env');
 const { getPagination, buildPaginationMeta } = require('../utils/pagination');
 const logger = require('../utils/logger');
 
@@ -14,6 +15,7 @@ class OrderService {
     emailService,
     invoiceService,
     paymentService,
+    smsService,
   }) {
     this.cartRepository = cartRepository;
     this.productRepository = productRepository;
@@ -23,6 +25,7 @@ class OrderService {
     this.emailService = emailService;
     this.invoiceService = invoiceService;
     this.paymentService = paymentService;
+    this.smsService = smsService;
   }
 
   async listForUser(userId, query = {}) {
@@ -199,6 +202,169 @@ class OrderService {
       await this.cartRepository.clear(user.id);
     }
     logger.info(`Checkout: cart cleared for user ${user.id}, order ${orderNumber} ready for redirect`);
+
+    return order;
+  }
+
+  /**
+   * Guest checkout: same pipeline as `checkout` but identity comes from a
+   * verified OTP contact instead of a signed-in user.
+   * contact: { type: 'email'|'phone', value, verifiedAt } — already OTP-verified.
+   * payload: { items:[{productId, quantity, cutNotes}], couponCode, ...address, paymentMethod }
+   */
+  async checkoutGuest(contact, payload, options = {}) {
+    if (payload.paymentMethod?.startsWith('paymob')) {
+      this.paymentService.ensurePaymobConfigured(payload.paymentMethod);
+    }
+
+    if (!payload.items || payload.items.length === 0) {
+      throw new AppError('Your cart is empty.', 400);
+    }
+
+    // Fresh product data: prices/stock are re-validated at order time.
+    const cartItems = [];
+    for (const entry of payload.items) {
+      const product = await this.productRepository.findActiveById(entry.productId);
+      if (!product) {
+        throw new AppError('One of the products is no longer available. Please review your cart.', 400);
+      }
+      const quantity = Number(entry.quantity);
+      if (product.stock < quantity) {
+        throw new AppError(`${product.name} is no longer available in the requested quantity.`, 400);
+      }
+      cartItems.push({ product, quantity, unitPrice: product.price, cutNotes: entry.cutNotes || '' });
+    }
+
+    const cartLike = { items: cartItems, couponCode: payload.couponCode || null };
+    const totals = await this.calculateOrderTotals(cartLike);
+    const shippingAddress = this.mapAddress(payload);
+    const orderNumber = this.createOrderNumber();
+    const isPaymob = payload.paymentMethod?.startsWith('paymob');
+
+    logger.info(`Guest checkout: order=${orderNumber} method=${payload.paymentMethod} items=${cartItems.length} total=${totals.total}`);
+
+    const guest = {
+      name: payload.fullName,
+      email: contact.type === 'email' ? contact.value : undefined,
+      phone: contact.type === 'phone' ? contact.value : undefined,
+    };
+
+    const session = await mongoose.startSession();
+    let order;
+
+    try {
+      await session.withTransaction(async () => {
+        const orderItems = [];
+
+        for (const item of cartItems) {
+          const product = item.product;
+          const updatedProduct = await this.productRepository.decrementStock(product.id, item.quantity, { session });
+
+          if (!updatedProduct) {
+            throw new AppError(`${product.name} is no longer available in the requested quantity.`, 400);
+          }
+
+          orderItems.push({
+            product: product.id,
+            name: product.name,
+            sku: product.sku,
+            image: product.images?.[0]?.url,
+            material: product.material,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            lineTotal: item.quantity * item.unitPrice,
+            cutNotes: item.cutNotes,
+          });
+
+          await this.inventoryRepository.create(
+            {
+              product: product.id,
+              type: 'sale',
+              quantityChange: -item.quantity,
+              stockAfter: updatedProduct.stock,
+              note: `Order ${orderNumber} (guest)`,
+            },
+            { session }
+          );
+        }
+
+        order = await this.orderRepository.create(
+          {
+            orderNumber,
+            guest,
+            items: orderItems,
+            shippingAddress,
+            subtotal: totals.subtotal,
+            discount: totals.discount,
+            shipping: totals.shipping,
+            tax: totals.tax,
+            total: totals.total,
+            couponCode: cartLike.couponCode,
+            paymentMethod: payload.paymentMethod,
+            payment: {
+              status: 'pending',
+              provider: isPaymob ? 'paymob' : 'cash',
+            },
+            status: 'pending',
+          },
+          { session }
+        );
+
+        await this.couponService.markUsed(cartLike.couponCode, { session });
+      });
+    } finally {
+      await session.endSession();
+    }
+
+    logger.info(`Guest checkout: order ${orderNumber} created in DB`);
+
+    if (payload.paymentMethod === 'paymob_card') {
+      try {
+        const iframeUrl = await this.paymentService.createPaymobCardPayment(order);
+        order = await this.orderRepository.updateById(order.id, { payment: { ...order.payment, iframeUrl } });
+        logger.info(`Guest checkout: paymob_card iframe URL saved for order ${orderNumber}`);
+      } catch (err) {
+        logger.error(`Guest checkout: paymob_card failed for order ${orderNumber}: ${err.message}`);
+        throw new AppError('Payment gateway error: ' + (err.message || 'Unable to connect to Paymob. Please try again.'), 502);
+      }
+    }
+
+    if (payload.paymentMethod === 'paymob_wallet') {
+      try {
+        const result = await this.paymentService.createPaymobWalletPayment(order);
+        order = await this.orderRepository.updateById(order.id, { payment: { ...order.payment, walletToken: result.token } });
+        logger.info(`Guest checkout: paymob_wallet token saved for order ${orderNumber}`);
+      } catch (err) {
+        logger.error(`Guest checkout: paymob_wallet failed for order ${orderNumber}: ${err.message}`);
+        throw new AppError('Payment gateway error: ' + (err.message || 'Unable to connect to Paymob. Please try again.'), 502);
+      }
+    }
+
+    this.invoiceService.generateInvoice(order).then(async (invoice) => {
+      await this.orderRepository.updateById(order.id, { invoice });
+      logger.info(`Guest checkout: invoice generated for order ${orderNumber}`);
+    }).catch((err) => {
+      logger.error(`Guest checkout: invoice generation failed for order ${orderNumber}: ${err.message}`);
+    });
+
+    // Guest confirmation goes to whichever contact was just verified.
+    if (guest.email) {
+      this.emailService.sendGuestOrderConfirmation({ name: guest.name, email: guest.email }, order).catch((err) => {
+        logger.error(`Guest checkout: email failed for order ${orderNumber}: ${err.message}`);
+      });
+    } else if (guest.phone && this.smsService) {
+      this.smsService
+        .send({ to: guest.phone, message: `BoxEseg: order ${order.orderNumber} received. Total: ${order.total} EGP. Track: ${env.clientUrl}/orders/guest` })
+        .catch((err) => logger.error(`Guest checkout: SMS failed for order ${orderNumber}: ${err.message}`));
+    }
+
+    // Extra free confirmation into the Telegram chat the guest linked during
+    // verification (see TelegramService).
+    if (options.telegramChatId && this.telegramService) {
+      this.telegramService
+        .send(options.telegramChatId, `BoxEseg: order ${order.orderNumber} received! Total: ${order.total} EGP. Track: ${env.clientUrl}/orders/guest`)
+        .catch((err) => logger.error(`Guest checkout: Telegram confirmation failed for order ${orderNumber}: ${err.message}`));
+    }
 
     return order;
   }

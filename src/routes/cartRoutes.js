@@ -1,12 +1,11 @@
 const express = require('express');
 const cartController = require('../controllers/CartController');
-const { requireAuth } = require('../middlewares/authMiddleware');
 const validate = require('../middlewares/validate');
 const cartValidators = require('../validators/cartValidators');
 
 const router = express.Router();
 
-router.use(requireAuth);
+// Public to everyone: signed-in users get the DB cart, guests the session cart.
 router.get('/', cartController.index);
 router.post('/items', cartValidators.addItemRules, validate, cartController.addItem);
 router.patch('/items/:productId', cartValidators.updateItemRules, validate, cartController.updateItem);

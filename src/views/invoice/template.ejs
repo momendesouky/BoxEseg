@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice <%= order.orderNumber %> | BoxEseg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --latte:#FAF6EF; --card:#FFFDF8;
+      --espresso:#2B2018; --mocha:#6A5446;
+      --caramel:#C1784F; --caramel-deep:#A25E3C;
+      --line:rgba(43,32,24,.14); --line-strong:rgba(43,32,24,.30);
+    }
+    @page{ size:A4; margin:0 }
+    *{ margin:0; padding:0; box-sizing:border-box }
+    html,body{ -webkit-print-color-adjust:exact; print-color-adjust:exact }
+    body{
+      font-family:'Inter','Cairo','Segoe UI',Tahoma,Arial,sans-serif;
+      color:var(--espresso); background:var(--card); line-height:1.55; font-size:12.5px;
+    }
+    .page{ display:block; width:210mm; min-height:297mm; padding:16mm 16mm 12mm; position:relative; background:var(--card) }
+
+    /* header */
+    .head{ display:flex; align-items:flex-start; justify-content:space-between; padding-bottom:18px; border-bottom:2px solid var(--espresso) }
+    .brand{ display:flex; align-items:center; gap:12px }
+    .brand img{ width:46px; height:46px; object-fit:contain }
+    .brand-name{ font-family:'Playfair Display',Georgia,serif; font-size:26px; font-weight:700; letter-spacing:.01em }
+    .brand-name span{ color:var(--caramel) }
+    .brand-sub{ font-size:10px; color:var(--mocha); text-transform:uppercase; letter-spacing:.18em; margin-top:2px }
+    .invoice-tag{ text-align:right }
+    .invoice-tag h1{ font-family:'Playfair Display',Georgia,serif; font-size:26px; font-weight:600; color:var(--caramel-deep) }
+    .status-chip{ display:inline-flex; align-items:center; gap:6px; margin-top:8px; padding:5px 14px; border-radius:999px; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em }
+    .status-chip::before{ content:''; width:6px; height:6px; border-radius:50%; background:currentColor }
+    .chip-paid{ background:#e7f0e9; color:#2f7d50 }
+    .chip-pending{ background:#f8ecd8; color:#a1721d }
+    .chip-failed{ background:#f5e7e4; color:#b04035 }
+
+    /* meta strip */
+    .meta{ display:flex; gap:12px; margin-top:18px }
+    .meta-card{ flex:1; background:var(--latte); border:1px solid var(--line); border-radius:10px; padding:12px 14px }
+    .meta-card .k{ font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.14em; color:var(--mocha) }
+    .meta-card .v{ margin-top:4px; font-weight:600; font-size:12.5px; overflow-wrap:break-word }
+
+    /* parties */
+    .parties{ display:flex; gap:24px; margin-top:18px }
+    .party{ flex:1 }
+    .party .k{ font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.14em; color:var(--mocha); padding-bottom:6px; border-bottom:1px solid var(--line-strong); margin-bottom:8px }
+    .party .line{ margin-top:2px; overflow-wrap:break-word }
+    .party .muted{ color:var(--mocha) }
+
+    /* items table */
+    table.items{ width:100%; border-collapse:collapse; margin-top:18px }
+    .items th{ text-align:left; font-size:9px; text-transform:uppercase; letter-spacing:.14em; color:var(--mocha); padding:8px 10px; border-bottom:2px solid var(--line-strong) }
+    .items td{ padding:10px; border-bottom:1px dashed var(--line); vertical-align:top }
+    .items .num{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums }
+    .item-name{ font-weight:600; font-size:13px }
+    .item-sku{ color:var(--mocha); font-size:10.5px; margin-top:2px }
+    .item-notes{ color:var(--caramel-deep); font-size:10.5px; margin-top:2px }
+    .item-thumb{ width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid var(--line) }
+    .td-product{ display:flex; gap:10px; align-items:flex-start }
+    .td-product .info{ min-width:0 }
+
+    /* totals */
+    .totals{ margin-top:16px; margin-left:auto; width:64mm }
+    .totals .row{ display:flex; justify-content:space-between; padding:6px 10px }
+    .totals .row span:last-child{ font-variant-numeric:tabular-nums; font-weight:600 }
+    .totals .label{ color:var(--mocha) }
+    .totals .grand{ margin-top:6px; background:var(--espresso); color:var(--latte); border-radius:10px; padding:10px 14px; font-size:14.5px; font-weight:700; display:flex; justify-content:space-between; align-items:center }
+    .discount{ color:#2f7d50 }
+
+    /* footer */
+    .foot{ margin-top:26px; padding-top:14px; border-top:1px solid var(--line-strong); display:flex; justify-content:space-between; gap:16px; color:var(--mocha); font-size:10px }
+    .foot .thanks{ font-family:'Playfair Display',Georgia,serif; color:var(--espresso); font-size:12.5px }
+    .foot-brand{ margin-top:10px; text-align:center; color:rgba(43,32,24,.45); font-size:9px; letter-spacing:.16em; text-transform:uppercase }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="head">
+      <div class="brand">
+        <% if (logoDataUrl) { %><img src="<%= logoDataUrl %>" alt=""><% } %>
+        <div>
+          <div class="brand-name">Box<span>Eseg</span></div>
+          <div class="brand-sub">Stationery for the analog mind</div>
+        </div>
+      </div>
+      <div class="invoice-tag">
+        <h1>Invoice</h1>
+        <div style="margin-top:4px;font-weight:600"><%= order.orderNumber %></div>
+        <div class="status-chip chip-<%= order.payment && order.payment.status ? order.payment.status : 'pending' %>"><%= order.payment && order.payment.status ? order.payment.status : 'pending' %></div>
+      </div>
+    </div>
+
+    <div class="meta">
+      <div class="meta-card" style="flex:1.2">
+        <div class="k">Invoice date</div>
+        <div class="v"><%= dateLine %></div>
+      </div>
+      <div class="meta-card">
+        <div class="k">Payment method</div>
+        <div class="v"><%= methodLabel %></div>
+      </div>
+      <div class="meta-card">
+        <div class="k">Transaction</div>
+        <div class="v"><%= (order.payment && order.payment.transactionId) || (order.payment && order.payment.paymobTransactionId) || '—' %></div>
+      </div>
+      <div class="meta-card">
+        <div class="k">Order status</div>
+        <div class="v" style="text-transform:capitalize"><%= order.status %></div>
+      </div>
+    </div>
+
+    <div class="parties">
+      <div class="party">
+        <div class="k">Billed to</div>
+        <div class="line"><strong><%= order.shippingAddress.fullName %></strong></div>
+        <div class="line"><%= order.shippingAddress.phone %></div>
+        <% if (order.guest && (order.guest.email || order.guest.phone)) { %>
+          <div class="line muted"><%= order.guest.email || order.guest.phone %> (guest)</div>
+        <% } %>
+      </div>
+      <div class="party">
+        <div class="k">Ship to</div>
+        <div class="line">
+          <% const a = order.shippingAddress; %>
+          <span dir="auto"><%= [a.building, a.street].filter(Boolean).join(', ') %></span>
+          <%= [a.area, a.city].filter(Boolean).join(', ') %>
+        </div>
+        <% if (a.notes) { %><div class="line muted">Note: <span dir="auto"><%= a.notes %></span></div><% } %>
+      </div>
+    </div>
+
+    <table class="items">
+      <thead>
+        <tr>
+          <th style="width:58%">Item</th>
+          <th class="num" style="width:10%">Qty</th>
+          <th class="num" style="width:16%">Unit price</th>
+          <th class="num" style="width:16%">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% order.items.forEach((item) => { %>
+          <tr>
+            <td>
+              <div class="td-product">
+                <% if (item.image) { %><img class="item-thumb" src="<%= item.image %>" onerror="this.style.display='none'"><% } %>
+                <div class="info">
+                  <div class="item-name" dir="auto"><%= item.name %></div>
+                  <% if (item.sku) { %><div class="item-sku">SKU <%= item.sku %><% if (item.material) { %> · <%= item.material %><% } %></div><% } else if (item.material) { %><div class="item-sku"><%= item.material %></div><% } %>
+                  <% if (item.cutNotes) { %><div class="item-notes">Cut: <span dir="auto"><%= item.cutNotes %></span></div><% } %>
+                </div>
+              </div>
+            </td>
+            <td class="num"><%= item.quantity %></td>
+            <td class="num"><%= money(item.unitPrice) %></td>
+            <td class="num"><strong><%= money(item.lineTotal) %></strong></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <% if (order.subtotal != null) { %>
+        <div class="row"><span class="label">Subtotal</span><span><%= money(order.subtotal) %></span></div>
+      <% } %>
+      <% if (order.discount > 0) { %>
+        <div class="row"><span class="label discount"><%= order.couponCode ? 'Discount (' + order.couponCode + ')' : 'Discount' %></span><span class="discount">−<%= money(order.discount) %></span></div>
+      <% } %>
+      <% if (order.shipping > 0) { %>
+        <div class="row"><span class="label">Shipping</span><span><%= money(order.shipping) %></span></div>
+      <% } %>
+      <% if (order.tax > 0) { %>
+        <div class="row"><span class="label">Tax</span><span><%= money(order.tax) %></span></div>
+      <% } %>
+      <div class="grand"><span>Total</span><span><%= money(order.total) %> EGP</span></div>
+    </div>
+
+    <div class="foot">
+      <div>
+        <div class="thanks">Thank you for shopping with BoxEseg.</div>
+      </div>
+      <div style="text-align:right">
+        <div>Questions about this invoice?</div>
+        <div style="font-weight:600;color:var(--espresso)">Track it anytime at boxeseg.com/orders/guest</div>
+      </div>
+    </div>
+    <div class="foot-brand">BoxEseg · Curating the finest analog tools</div>
+  </div>
+</body>
+</html>

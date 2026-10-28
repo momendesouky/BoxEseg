@@ -1,9 +1,14 @@
 const catchAsync = require('../utils/catchAsync');
 const container = require('../config/container');
+const guestController = require('./GuestController');
 
 exports.index = catchAsync(async (req, res) => {
+  if (!req.currentUser) {
+    // Guests: session cart + contact-verification form (same view file).
+    return guestController.checkoutIndex(req, res);
+  }
   const { cart, totals } = await container.cartService.getCart(req.currentUser.id);
-  res.render('checkout/index', { title: 'Checkout', cart, totals });
+  res.render('checkout/index', { title: 'Checkout', cart, totals, draft: null });
 });
 
 exports.checkout = catchAsync(async (req, res) => {

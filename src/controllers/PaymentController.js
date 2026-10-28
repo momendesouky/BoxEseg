@@ -43,6 +43,13 @@ exports.paymobCallback = catchAsync(async (req, res) => {
     return res.redirect('/orders');
   }
 
+  // Guest payments land back on the guest tracking page (session identity
+  // was set during checkout verification).
+  if (success && req.session.guestIdentity) {
+    req.flash('success', 'Payment received successfully.');
+    return res.redirect(`/orders/guest/${orderNumber}`);
+  }
+
   if (success && !req.currentUser) {
     req.flash('success', 'Payment received successfully. Please sign in to view your order.');
     return res.redirect(`/auth/login?next=${encodeURIComponent('/orders')}`);
@@ -62,6 +69,10 @@ exports.walletPage = catchAsync(async (req, res) => {
 });
 
 exports.paymentStatus = catchAsync(async (req, res) => {
+  // Only the session that started the payment (or its owner) may poll status.
+  if (!req.currentUser && req.session.pendingPaymentOrder !== req.params.orderNumber) {
+    return res.json({ paymentStatus: 'unknown' });
+  }
   const order = await container.orderRepository.findByOrderNumber(req.params.orderNumber);
   if (!order) return res.json({ paymentStatus: 'unknown' });
   res.json({ paymentStatus: order.payment?.status || 'pending' });

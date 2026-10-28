@@ -8,9 +8,14 @@ const ReviewRepository = require('../repositories/ReviewRepository');
 const CouponRepository = require('../repositories/CouponRepository');
 const InventoryRepository = require('../repositories/InventoryRepository');
 const PasswordResetTokenRepository = require('../repositories/PasswordResetTokenRepository');
+const OtpVerificationRepository = require('../repositories/OtpVerificationRepository');
+const TelegramContactRepository = require('../repositories/TelegramContactRepository');
 
 const EmailService = require('../services/EmailService');
 const InvoiceService = require('../services/InvoiceService');
+const SmsService = require('../services/SmsService');
+const TelegramService = require('../services/TelegramService');
+const OtpService = require('../services/OtpService');
 const AuthService = require('../services/AuthService');
 const UserService = require('../services/UserService');
 const CategoryService = require('../services/CategoryService');
@@ -34,9 +39,14 @@ const reviewRepository = new ReviewRepository();
 const couponRepository = new CouponRepository();
 const inventoryRepository = new InventoryRepository();
 const passwordResetTokenRepository = new PasswordResetTokenRepository();
+const otpVerificationRepository = new OtpVerificationRepository();
+const telegramContactRepository = new TelegramContactRepository();
 
 const emailService = new EmailService();
 const invoiceService = new InvoiceService();
+const smsService = new SmsService();
+const telegramService = new TelegramService();
+const otpService = new OtpService({ otpRepository: otpVerificationRepository, emailService, smsService, telegramService });
 const authService = new AuthService({ userRepository, passwordResetTokenRepository, emailService });
 const userService = new UserService({ userRepository });
 const categoryService = new CategoryService({ categoryRepository });
@@ -54,6 +64,8 @@ const orderService = new OrderService({
   emailService,
   invoiceService,
   paymentService,
+  smsService,
+  telegramService,
 });
 const reviewService = new ReviewService({ reviewRepository, productRepository });
 const dashboardService = new DashboardService({
@@ -77,8 +89,13 @@ module.exports = {
   couponRepository,
   inventoryRepository,
   passwordResetTokenRepository,
+  otpVerificationRepository,
+  telegramContactRepository,
   emailService,
   invoiceService,
+  smsService,
+  telegramService,
+  otpService,
   authService,
   userService,
   categoryService,

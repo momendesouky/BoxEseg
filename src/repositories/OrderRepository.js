@@ -22,6 +22,31 @@ class OrderRepository extends BaseRepository {
     return this.model.find({ user: userId }).sort('-createdAt').skip(skip).limit(limit);
   }
 
+  // Guest order tracking scoped to a verified email/phone contact.
+  listForGuest(contactType, contact, { skip = 0, limit = 20 } = {}) {
+    const filter =
+      contactType === 'email'
+        ? { 'guest.email': contact.toLowerCase() }
+        : { 'guest.phone': contact };
+    return this.model.find(filter).sort('-createdAt').skip(skip).limit(limit);
+  }
+
+  countForGuest(contactType, contact) {
+    const filter =
+      contactType === 'email'
+        ? { 'guest.email': contact.toLowerCase() }
+        : { 'guest.phone': contact };
+    return this.model.countDocuments(filter);
+  }
+
+  findForGuestOrderNumber(orderNumber, contactType, contact) {
+    const contactFilter =
+      contactType === 'email'
+        ? { 'guest.email': contact.toLowerCase() }
+        : { 'guest.phone': contact };
+    return this.model.findOne({ orderNumber, ...contactFilter });
+  }
+
   list({ filter = {}, skip = 0, limit = 20, sort = '-createdAt' } = {}) {
     return this.model
       .find(filter)

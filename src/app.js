@@ -67,7 +67,9 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
-      secure: env.isProduction,
+      // 'auto' => secure cookie only when the request is https (Cloudflare tunnel
+      // sets x-forwarded-proto); plain cookie on http://localhost dev usage.
+      secure: 'auto',
       maxAge: 1000 * 60 * 60 * 24 * 14,
     },
   })
